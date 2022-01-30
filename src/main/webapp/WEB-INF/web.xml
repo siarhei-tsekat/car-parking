@@ -29,16 +29,22 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>spot</servlet-name>
-        <url-pattern>/spot</url-pattern>
+        <url-pattern>/spots</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>reservation</servlet-name>
         <servlet-class>net.tsekot.controller.ReservationController</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>reservation</servlet-name>
         <url-pattern>/reservation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>reservation</servlet-name>
+        <url-pattern>/reservation/cancel</url-pattern>
     </servlet-mapping>
 
     <filter>

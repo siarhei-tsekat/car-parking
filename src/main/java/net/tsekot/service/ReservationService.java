@@ -7,14 +7,14 @@ import net.tsekot.persistence.UnitOfWork;
 import net.tsekot.persistence.dao.reservation.ReservationDao;
 import net.tsekot.persistence.dao.reservation.ReservationException;
 import net.tsekot.persistence.dao.spot.SpotDao;
-import net.tsekot.persistence.dao.spot.SpotException;
-import net.tsekot.persistence.dao.spot.SpotNotFoundException;
+import net.tsekot.persistence.entity.Reservation;
 import net.tsekot.persistence.entity.Spot;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ReservationService {
 
@@ -53,6 +53,33 @@ public class ReservationService {
             return transactionManager.execute(unitOfWork, Connection.TRANSACTION_REPEATABLE_READ);
 
         } catch (Exception e) {
+            logger.error(e);
+            throw new ReservationException(e.getMessage());
+        }
+    }
+
+    public List<Reservation> getReservationsByUser(String userId) throws ReservationException {
+        try {
+            return transactionManager.execute(() -> reservationDao.getReservationsByUser(userId), Connection.TRANSACTION_READ_COMMITTED);
+        } catch (Exception e) {
+            logger.error(e);
+            throw new ReservationException(e.getMessage());
+        }
+    }
+
+    public boolean cancelReservation(String userId, String reservationId) throws ReservationException {
+        try {
+
+            UnitOfWork<Boolean, ReservationNotFoundException> unitOfWork = () -> {
+                if (reservationDao.getByReservationById(reservationId).isPresent()) {
+                    return reservationDao.deleteReservation(userId, reservationId);
+                } else {
+                    throw new ReservationNotFoundException("Reservation with id: " + reservationId + " doesn't exist");
+                }
+            };
+
+            return transactionManager.execute(unitOfWork, Connection.TRANSACTION_REPEATABLE_READ);
+        } catch (SQLException e) {
             logger.error(e);
             throw new ReservationException(e.getMessage());
         }
