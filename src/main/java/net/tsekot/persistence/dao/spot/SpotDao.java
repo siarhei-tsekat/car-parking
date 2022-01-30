@@ -22,7 +22,7 @@ public class SpotDao {
         Connection connection = dataSource.getConnection();
 
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT id, spot_id, available from spots");
+            ResultSet resultSet = statement.executeQuery("SELECT id, spot_id, spot_type, available from spots");
 
             while (resultSet.next()) {
                 Spot spot = getSpot(resultSet);
@@ -37,7 +37,7 @@ public class SpotDao {
 
         Connection connection = dataSource.getConnection();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, spot_id, available from spots where spot_id = ?")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, spot_id, spot_type, available from spots where spot_id = ?")) {
             preparedStatement.setString(1, spotId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -65,7 +65,8 @@ public class SpotDao {
     private Spot getSpot(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         int spot_id = resultSet.getInt("spot_id");
+        int spot_type = resultSet.getInt("spot_type");
         int available = resultSet.getInt("available");
-        return new Spot(id, spot_id, available == 0);
+        return new Spot(id, spot_id, spot_type, available == 0);
     }
 }

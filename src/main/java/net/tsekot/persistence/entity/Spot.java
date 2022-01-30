@@ -3,14 +3,14 @@ package net.tsekot.persistence.entity;
 public class Spot {
 
     private long id;
-
     private long spotId;
-
+    private int spotType;
     private boolean available;
 
-    public Spot(long id, long spotId, boolean available) {
+    public Spot(long id, long spotId, int spotType, boolean available) {
         this.id = id;
         this.spotId = spotId;
+        this.spotType = spotType;
         this.available = available;
     }
 
@@ -33,7 +33,9 @@ public class Spot {
     @Override
     public String toString() {
         return "Spot{" +
-                "spotId=" + spotId +
+                "id=" + id +
+                ", spotId=" + spotId +
+                ", spotType=" + spotType +
                 ", available=" + available +
                 '}';
     }
