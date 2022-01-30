@@ -61,6 +61,7 @@ public class ReservationController extends HttpServlet {
     private void cancelSpot(String userId, String reservationId, HttpServletRequest req, HttpServletResponse resp) {
         try {
             boolean res = reservationService.cancelReservation(userId, reservationId);
+
             if (res) {
                 resp.setStatus(HttpServletResponse.SC_OK);
             } else {
@@ -84,11 +85,10 @@ public class ReservationController extends HttpServlet {
 
         if (spotIdString != null && startTimeString != null && endTimeString != null && userId != null) {
             try {
-                Integer spotId = parseSpotId(spotIdString);
                 LocalDateTime startTime = parseTime(startTimeString);
                 LocalDateTime endTime = parseTime(endTimeString);
 
-                String reservationId = reservationService.reserveSpot(userId, spotId, startTime, endTime);
+                String reservationId = reservationService.reserveSpot(userId, spotIdString, startTime, endTime);
 
                 resp.getWriter().print("ReservationId: " + reservationId);
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -108,9 +108,5 @@ public class ReservationController extends HttpServlet {
 
     private LocalDateTime parseTime(String start_time) {
         return LocalDateTime.parse(start_time, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    }
-
-    private Integer parseSpotId(String slot_id) {
-        return Integer.parseInt(slot_id);
     }
 }

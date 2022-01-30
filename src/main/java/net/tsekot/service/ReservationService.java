@@ -12,9 +12,11 @@ import net.tsekot.persistence.entity.Spot;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static net.tsekot.util.Toxic.Try;
 
 public class ReservationService {
 
@@ -30,11 +32,12 @@ public class ReservationService {
         this.reservationDao = new ReservationDao(transactionManager);
     }
 
-    public String reserveSpot(String userId, Integer spotId, LocalDateTime startTime, LocalDateTime endTime) throws ReservationException {
+    public String reserveSpot(String userId, String spotId, LocalDateTime startTime, LocalDateTime endTime) throws ReservationException {
 
         try {
             UnitOfWork<String, Exception> unitOfWork = () -> {
-                Spot spotById = spotDao.getSpotById(spotId);
+
+                Spot spotById = spotDao.getSpotById(spotId).orElseThrow();
 
                 if (spotById.isAvailable()) {
                     spotById.setAvailable(false);
@@ -70,8 +73,17 @@ public class ReservationService {
     public boolean cancelReservation(String userId, String reservationId) throws ReservationException {
         try {
 
-            UnitOfWork<Boolean, ReservationNotFoundException> unitOfWork = () -> {
-                if (reservationDao.getByReservationById(reservationId).isPresent()) {
+            UnitOfWork<Boolean, Exception> unitOfWork = () -> {
+
+                Optional<Spot> optionalSpot = reservationDao
+                        .getReservationById(reservationId)
+                        .map(Reservation::getSpotId)
+                        .flatMap(Try(spotDao::getSpotById));
+
+                if (optionalSpot.isPresent()) {
+                    Spot spot = optionalSpot.get();
+                    spot.setAvailable(true);
+                    spotDao.save(spot);
                     return reservationDao.deleteReservation(userId, reservationId);
                 } else {
                     throw new ReservationNotFoundException("Reservation with id: " + reservationId + " doesn't exist");
@@ -79,7 +91,7 @@ public class ReservationService {
             };
 
             return transactionManager.execute(unitOfWork, Connection.TRANSACTION_REPEATABLE_READ);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.error(e);
             throw new ReservationException(e.getMessage());
         }

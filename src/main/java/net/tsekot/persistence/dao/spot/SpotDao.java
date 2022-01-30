@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SpotDao {
 
@@ -32,18 +33,18 @@ public class SpotDao {
         }
     }
 
-    public Spot getSpotById(Integer spotId) throws SQLException, SpotNotFoundException {
+    public Optional<Spot> getSpotById(String spotId) throws SQLException {
 
         Connection connection = dataSource.getConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, spot_id, available from spots where spot_id = ?")) {
-            preparedStatement.setInt(1, spotId);
+            preparedStatement.setString(1, spotId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next()) {
-                throw new SpotNotFoundException("Spot with such id doesn't exist: " + spotId);
+                return Optional.empty();
             } else {
-                return getSpot(resultSet);
+                return Optional.of(getSpot(resultSet));
             }
         }
     }

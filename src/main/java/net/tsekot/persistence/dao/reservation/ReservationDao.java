@@ -78,7 +78,7 @@ public class ReservationDao {
         }
     }
 
-    public Optional<Reservation> getByReservationById(String reservationId) throws SQLException {
+    public Optional<Reservation> getReservationById(String reservationId) throws SQLException {
         Connection connection = dataSource.getConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, reservation_id, user_id, spot_id, start_time, end_time, price from reservations WHERE reservation_id = ?")) {
