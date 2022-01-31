@@ -43,6 +43,8 @@ public class LoginController extends HttpServlet {
                 logger.info("User with name: " + username + " wasn't found");
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
