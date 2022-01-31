@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpotController extends HttpServlet {
 
@@ -22,7 +23,31 @@ public class SpotController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String spotType = req.getParameter("spotType");
 
+        if (spotType != null && !spotType.isBlank()) {
+            getAllSpotsByType(spotType, req, resp);
+        } else {
+            getAll(resp);
+        }
+    }
+
+    private void getAllSpotsByType(String spotType, HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            Integer spotTypeInt = Integer.parseInt(spotType);
+
+            List<Spot> allAvailableSpots = spotService.getAllAvailableSpots()
+                    .stream()
+                    .filter(spot -> spotTypeInt.equals(spot.getSpotType())).collect(Collectors.toList());
+
+            resp.getWriter().print(allAvailableSpots);
+        } catch (Exception e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            logger.error(e);
+        }
+    }
+
+    private void getAll(HttpServletResponse resp) {
         try {
             List<Spot> allAvailableSpots = spotService.getAllAvailableSpots();
 

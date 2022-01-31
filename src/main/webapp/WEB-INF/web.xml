@@ -29,7 +29,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>spot</servlet-name>
-        <url-pattern>/spots</url-pattern>
+        <url-pattern>/spot</url-pattern>
     </servlet-mapping>
 
     <servlet>

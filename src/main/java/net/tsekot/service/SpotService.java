@@ -40,5 +40,4 @@ public class SpotService {
             throw new SpotException(e.getMessage());
         }
     }
-
 }

@@ -26,6 +26,10 @@ public class Spot {
         return available;
     }
 
+    public int getSpotType() {
+        return spotType;
+    }
+
     public void setAvailable(boolean available) {
         this.available = available;
     }
