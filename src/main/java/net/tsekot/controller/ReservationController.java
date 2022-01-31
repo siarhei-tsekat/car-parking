@@ -29,6 +29,8 @@ public class ReservationController extends HttpServlet {
         String userId = req.getParameter("userId");
         if (userId != null && !userId.isBlank()) {
             getReservationsByUser(userId, req, resp);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -44,6 +46,8 @@ public class ReservationController extends HttpServlet {
 
         if (userId != null && !userId.isBlank() && reservationId != null && !reservationId.isBlank()) {
             cancelSpot(userId, reservationId, req, resp);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
