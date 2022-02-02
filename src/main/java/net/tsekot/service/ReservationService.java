@@ -6,6 +6,7 @@ import net.tsekot.persistence.TransactionManagerImpl;
 import net.tsekot.persistence.UnitOfWork;
 import net.tsekot.persistence.dao.reservation.ReservationDao;
 import net.tsekot.persistence.dao.reservation.ReservationException;
+import net.tsekot.persistence.dao.reservation.ReservationLogsDao;
 import net.tsekot.persistence.dao.spot.SpotDao;
 import net.tsekot.persistence.entity.Reservation;
 import net.tsekot.persistence.entity.Spot;
@@ -24,15 +25,17 @@ public class ReservationService {
 
     private final SpotDao spotDao;
     private final ReservationDao reservationDao;
+    private final ReservationLogsDao reservationLogsDao;
     private final TransactionManager transactionManager;
 
     public ReservationService() {
         this.transactionManager = new TransactionManagerImpl(C3PODataSource.getC3PODataSource());
         this.spotDao = new SpotDao(transactionManager);
         this.reservationDao = new ReservationDao(transactionManager);
+        this.reservationLogsDao = new ReservationLogsDao(transactionManager);
     }
 
-    public String reserveSpot(String userId, String spotId, LocalDateTime startTime, LocalDateTime endTime) throws ReservationException {
+    public String reserveSpot(String userId, String spotId, LocalDateTime startTime) throws ReservationException {
 
         try {
             UnitOfWork<String, Exception> unitOfWork = () -> {
@@ -44,7 +47,7 @@ public class ReservationService {
                     boolean saved = spotDao.save(spotById);
 
                     if (saved) {
-                        return reservationDao.reserveSpot(spotById.getSpotId(), startTime, endTime, userId);
+                        return reservationDao.reserveSpot(spotById.getSpotId(), startTime, userId);
                     } else {
                         throw new ReservationException("Spot with id " + spotId + " wasn't changed.");
                     }
@@ -70,7 +73,7 @@ public class ReservationService {
         }
     }
 
-    public boolean cancelReservation(String userId, String reservationId) throws ReservationException {
+    public boolean removeReservation(String userId, String reservationId) throws ReservationException {
         try {
 
             UnitOfWork<Boolean, Exception> unitOfWork = () -> {
@@ -91,6 +94,34 @@ public class ReservationService {
             };
 
             return transactionManager.execute(unitOfWork, Connection.TRANSACTION_REPEATABLE_READ);
+        } catch (Exception e) {
+            logger.error(e);
+            throw new ReservationException(e.getMessage());
+        }
+    }
+
+    public Reservation getReservation(String reservationId) throws ReservationException {
+        try {
+            Optional<Reservation> reservation = transactionManager.execute(() -> reservationDao.getReservationById(reservationId), Connection.TRANSACTION_READ_COMMITTED);
+            return reservation.orElseThrow(() -> new ReservationNotFoundException("Not found reservation with id: " + reservationId));
+        } catch (Exception e) {
+            logger.error(e);
+            throw new ReservationException(e.getMessage());
+        }
+    }
+
+    public void cancelReservation(String reservationId, String userId, String startTime, String endTime, String totalCost) throws ReservationException {
+        try {
+
+            removeReservation(userId, reservationId);
+
+            UnitOfWork<Void, Exception> unitOfWork = () -> {
+                reservationLogsDao.write(reservationId, userId, startTime, endTime, totalCost);
+                return null;
+            };
+
+            transactionManager.execute(unitOfWork);
+
         } catch (Exception e) {
             logger.error(e);
             throw new ReservationException(e.getMessage());

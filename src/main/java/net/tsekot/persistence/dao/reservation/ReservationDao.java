@@ -1,7 +1,6 @@
 package net.tsekot.persistence.dao.reservation;
 
 import net.tsekot.persistence.entity.Reservation;
-import net.tsekot.persistence.entity.Spot;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -20,19 +19,18 @@ public class ReservationDao {
         this.dataSource = dataSource;
     }
 
-    public String reserveSpot(long spotId, LocalDateTime startTime, LocalDateTime endTime, String userId) throws SQLException {
+    public String reserveSpot(long spotId, LocalDateTime startTime, String userId) throws SQLException {
         String reservationId = UUID.randomUUID().toString();
         Connection connection = dataSource.getConnection();
 
         try (PreparedStatement preparedStatement = connection
-                .prepareStatement("INSERT INTO reservations (reservation_id, user_id, spot_id, start_time, end_time, price) VALUES (?,?,?,?,?,?)")) {
+                .prepareStatement("INSERT INTO reservations (reservation_id, user_id, spot_id, start_time, price) VALUES (?,?,?,?,?)")) {
 
             preparedStatement.setString(1, reservationId);
             preparedStatement.setString(2, userId);
             preparedStatement.setLong(3, spotId);
             preparedStatement.setTimestamp(4, Timestamp.valueOf(startTime));
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(endTime));
-            preparedStatement.setBigDecimal(6, new BigDecimal("2.0")); // TODO: change hardcode
+            preparedStatement.setBigDecimal(5, new BigDecimal("2.0")); // TODO: change hardcode
 
             int i = preparedStatement.executeUpdate();
             if (i == 1) {
@@ -61,7 +59,7 @@ public class ReservationDao {
                 Timestamp start_time = resultSet.getTimestamp("start_time");
                 Timestamp end_time = resultSet.getTimestamp("end_time");
                 BigDecimal price = resultSet.getBigDecimal("price");
-                res.add(new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time.toLocalDateTime(), price));
+                res.add(new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time != null ? end_time.toLocalDateTime() : null, price));
             }
 
             return res;
@@ -93,7 +91,7 @@ public class ReservationDao {
                 Timestamp start_time = resultSet.getTimestamp("start_time");
                 Timestamp end_time = resultSet.getTimestamp("end_time");
                 BigDecimal price = resultSet.getBigDecimal("price");
-                return Optional.of(new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time.toLocalDateTime(), price));
+                return Optional.of(new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time == null ? null : end_time.toLocalDateTime(), price));
             }
 
             return Optional.empty();
