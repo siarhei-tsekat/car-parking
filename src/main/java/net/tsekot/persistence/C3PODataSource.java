@@ -1,6 +1,7 @@
 package net.tsekot.persistence;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import net.tsekot.config.ApplicationProperties;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -12,12 +13,17 @@ import java.util.logging.Logger;
 
 public class C3PODataSource implements DataSource {
 
+    private static ApplicationProperties properties = ApplicationProperties.instance();
     private static C3PODataSource c3PODataSource;
     private final ComboPooledDataSource comboPooledDataSource;
 
     public static C3PODataSource getC3PODataSource() {
         if (c3PODataSource == null) {
-            c3PODataSource = new C3PODataSource("tsekot", "pwd", "jdbc:sqlserver://localhost:1433;database=parking", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            c3PODataSource = new C3PODataSource(
+                    properties.getDbUserName(),
+                    properties.getDbPassword(),
+                    properties.getJdbcUrl(),
+                    properties.getDriverClass());
         }
         return c3PODataSource;
     }

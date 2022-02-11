@@ -25,8 +25,7 @@ public class SpotDao {
             ResultSet resultSet = statement.executeQuery("SELECT id, spot_id, spot_type, available from spots");
 
             while (resultSet.next()) {
-                Spot spot = getSpot(resultSet);
-                res.add(spot);
+                res.add(Spot.extract(resultSet));
             }
 
             return res;
@@ -44,7 +43,7 @@ public class SpotDao {
             if (!resultSet.next()) {
                 return Optional.empty();
             } else {
-                return Optional.of(getSpot(resultSet));
+                return Optional.of(Spot.extract(resultSet));
             }
         }
     }
@@ -60,13 +59,5 @@ public class SpotDao {
 
             return i == 1;
         }
-    }
-
-    private Spot getSpot(ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("id");
-        int spot_id = resultSet.getInt("spot_id");
-        int spot_type = resultSet.getInt("spot_type");
-        int available = resultSet.getInt("available");
-        return new Spot(id, spot_id, spot_type, available == 0);
     }
 }

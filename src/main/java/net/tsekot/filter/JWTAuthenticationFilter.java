@@ -6,7 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.tsekot.config.ApplicationProperties;
 import net.tsekot.controller.LoginController;
+import net.tsekot.util.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class JWTAuthenticationFilter extends HttpFilter {
 
     private final static Logger logger = Logger.getLogger(LoginController.class);
 
-    public static final String secret = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E="; //TODO: get it from a resource file
+    public static final String secret = ApplicationProperties.instance().getSecret();
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -29,7 +31,7 @@ public class JWTAuthenticationFilter extends HttpFilter {
 
             String authorization = req.getHeader("Authorization");
 
-            if (authorization != null && !authorization.isBlank() && authorization.startsWith("Bearer ")) {
+            if (ObjectUtils.notBlank(authorization) && authorization.startsWith("Bearer ")) {
                 String jwtToken = authorization.substring(7);
                 if (!tokenExpired(jwtToken)) {
                     chain.doFilter(req, res);

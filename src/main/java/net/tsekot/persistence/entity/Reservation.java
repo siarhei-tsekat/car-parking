@@ -1,6 +1,9 @@
 package net.tsekot.persistence.entity;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class Reservation {
@@ -62,5 +65,16 @@ public class Reservation {
                 ", endTime=" + endTime +
                 ", price=" + price +
                 '}';
+    }
+
+    public static Reservation extract(ResultSet resultSet) throws SQLException {
+        long id = resultSet.getLong("id");
+        String reservation_id = resultSet.getString("reservation_id");
+        String user_id = resultSet.getString("user_id");
+        String spot_id = resultSet.getString("spot_id");
+        Timestamp start_time = resultSet.getTimestamp("start_time");
+        Timestamp end_time = resultSet.getTimestamp("end_time");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time != null ? end_time.toLocalDateTime() : null, price);
     }
 }

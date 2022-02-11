@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.tsekot.persistence.dao.user.UserNotFoundException;
 import net.tsekot.persistence.entity.User;
 import net.tsekot.service.UserService;
+import net.tsekot.util.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class LoginController extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        if (username != null && !username.isBlank() && password != null && !password.isBlank()) {
+        if (ObjectUtils.notBlank(username, password)) {
             try {
                 User dbUser = userService.getUserByUserName(username);
                 if (password.equals(dbUser.getPassword())) {

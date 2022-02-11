@@ -51,15 +51,7 @@ public class ReservationDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-
-                long id = resultSet.getLong("id");
-                String reservation_id = resultSet.getString("reservation_id");
-                String user_id = resultSet.getString("user_id");
-                String spot_id = resultSet.getString("spot_id");
-                Timestamp start_time = resultSet.getTimestamp("start_time");
-                Timestamp end_time = resultSet.getTimestamp("end_time");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                res.add(new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time != null ? end_time.toLocalDateTime() : null, price));
+                res.add(Reservation.extract(resultSet));
             }
 
             return res;
@@ -84,14 +76,7 @@ public class ReservationDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String reservation_id = resultSet.getString("reservation_id");
-                String user_id = resultSet.getString("user_id");
-                String spot_id = resultSet.getString("spot_id");
-                Timestamp start_time = resultSet.getTimestamp("start_time");
-                Timestamp end_time = resultSet.getTimestamp("end_time");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                return Optional.of(new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time == null ? null : end_time.toLocalDateTime(), price));
+                return Optional.of(Reservation.extract(resultSet));
             }
 
             return Optional.empty();

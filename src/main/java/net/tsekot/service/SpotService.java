@@ -24,7 +24,6 @@ public class SpotService {
         spotDao = new SpotDao(transactionManager);
     }
 
-
     public List<Spot> getAllAvailableSpots() throws SpotException {
         try {
             UnitOfWork<List<Spot>, SQLException> unitOfWork = spotDao::getAll;

@@ -40,7 +40,7 @@ public class ReservationService {
         try {
             UnitOfWork<String, Exception> unitOfWork = () -> {
 
-                Spot spotById = spotDao.getSpotById(spotId).orElseThrow();
+                Spot spotById = spotDao.getSpotById(spotId).orElseThrow(RuntimeException::new);
 
                 if (spotById.isAvailable()) {
                     spotById.setAvailable(false);

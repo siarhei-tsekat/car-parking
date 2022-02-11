@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.tsekot.persistence.entity.Spot;
 import net.tsekot.service.SpotService;
+import net.tsekot.util.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class SpotController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String spotType = req.getParameter("spotType");
 
-        if (spotType != null && !spotType.isBlank()) {
+        if (ObjectUtils.notBlank(spotType)) {
             getAllSpotsByType(spotType, req, resp);
         } else {
             getAll(resp);

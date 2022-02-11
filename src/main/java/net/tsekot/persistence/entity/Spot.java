@@ -1,5 +1,8 @@
 package net.tsekot.persistence.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Spot {
 
     private long id;
@@ -42,5 +45,13 @@ public class Spot {
                 ", spotType=" + spotType +
                 ", available=" + available +
                 '}';
+    }
+
+    public static Spot extract(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        int spot_id = resultSet.getInt("spot_id");
+        int spot_type = resultSet.getInt("spot_type");
+        int available = resultSet.getInt("available");
+        return new Spot(id, spot_id, spot_type, available == 0);
     }
 }
