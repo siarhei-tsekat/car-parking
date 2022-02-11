@@ -19,7 +19,7 @@ public class ReservationDao {
         this.dataSource = dataSource;
     }
 
-    public String reserveSpot(long spotId, LocalDateTime startTime, String userId) throws SQLException {
+    public String reserveSpot(long spotId, LocalDateTime startTime, String userId, BigDecimal price) throws SQLException {
         String reservationId = UUID.randomUUID().toString();
         Connection connection = dataSource.getConnection();
 
@@ -30,7 +30,7 @@ public class ReservationDao {
             preparedStatement.setString(2, userId);
             preparedStatement.setLong(3, spotId);
             preparedStatement.setTimestamp(4, Timestamp.valueOf(startTime));
-            preparedStatement.setBigDecimal(5, new BigDecimal("2.0")); // TODO: change hardcode
+            preparedStatement.setBigDecimal(5, price);
 
             int i = preparedStatement.executeUpdate();
             if (i == 1) {

@@ -159,7 +159,7 @@ public class ReservationController extends HttpServlet {
             try {
                 LocalDateTime startTime = parseTime(startTimeString);
 
-                String reservationId = reservationService.reserveSpot(userId, spotIdString, startTime);
+                String reservationId = reservationService.reserveSpot(userId, spotIdString, startTime, priceService.getPriceFor(spotIdString, startTime));
 
                 resp.getWriter().print("ReservationId: " + reservationId);
                 resp.setStatus(HttpServletResponse.SC_OK);

@@ -12,4 +12,8 @@ public class PriceService {
 
         return (days * price.doubleValue()) + (minutes / 60 * price.doubleValue());
     }
+
+    public BigDecimal getPriceFor(String spotIdString, LocalDateTime startTime) {
+        return new BigDecimal("2.2");
+    }
 }

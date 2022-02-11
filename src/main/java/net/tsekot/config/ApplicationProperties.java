@@ -44,4 +44,8 @@ public class ApplicationProperties {
     public String getSecret() {
         return (String) properties.get("secret");
     }
+
+    public int getTokenExpirationHours() {
+        return (Integer) properties.get("token.expirationHours");
+    }
 }

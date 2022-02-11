@@ -15,7 +15,7 @@ public class ReservationLogsDao {
         dataSource = transactionManager;
     }
 
-    public void write(String reservationId, String userId, String startTime, String endTime, String totalCost) throws SQLException {
+    public void write(String reservationId, String userId, String startTime, String endTime, String totalCost, BigDecimal price) throws SQLException {
         Connection connection = dataSource.getConnection();
 
         try (PreparedStatement preparedStatement = connection
@@ -25,7 +25,7 @@ public class ReservationLogsDao {
             preparedStatement.setInt(3, 1);
             preparedStatement.setTimestamp(4, Timestamp.valueOf(startTime));
             preparedStatement.setTimestamp(5, Timestamp.valueOf(endTime));
-            preparedStatement.setBigDecimal(6, new BigDecimal("2.0"));
+            preparedStatement.setBigDecimal(6, price);
             preparedStatement.setBigDecimal(7, new BigDecimal(totalCost));
 
             preparedStatement.execute();

@@ -12,6 +12,7 @@ import net.tsekot.persistence.entity.Reservation;
 import net.tsekot.persistence.entity.Spot;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ReservationService {
         this.reservationLogsDao = new ReservationLogsDao(transactionManager);
     }
 
-    public String reserveSpot(String userId, String spotId, LocalDateTime startTime) throws ReservationException {
+    public String reserveSpot(String userId, String spotId, LocalDateTime startTime, BigDecimal price) throws ReservationException {
 
         try {
             UnitOfWork<String, Exception> unitOfWork = () -> {
@@ -47,7 +48,7 @@ public class ReservationService {
                     boolean saved = spotDao.save(spotById);
 
                     if (saved) {
-                        return reservationDao.reserveSpot(spotById.getSpotId(), startTime, userId);
+                        return reservationDao.reserveSpot(spotById.getSpotId(), startTime, userId, price);
                     } else {
                         throw new ReservationException("Spot with id " + spotId + " wasn't changed.");
                     }
@@ -113,10 +114,11 @@ public class ReservationService {
     public void cancelReservation(String reservationId, String userId, String startTime, String endTime, String totalCost) throws ReservationException {
         try {
 
+            Reservation reservation = getReservation(reservationId);
             removeReservation(userId, reservationId);
 
             UnitOfWork<Void, Exception> unitOfWork = () -> {
-                reservationLogsDao.write(reservationId, userId, startTime, endTime, totalCost);
+                reservationLogsDao.write(reservationId, userId, startTime, endTime, totalCost, reservation.getPrice());
                 return null;
             };
 
