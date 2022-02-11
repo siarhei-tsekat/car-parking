@@ -1,6 +1,8 @@
 package net.tsekot.persistence.dao.spot;
 
-public class SpotException extends Exception {
+import net.tsekot.domain.DomainException;
+
+public class SpotException extends DomainException {
     public SpotException(String message) {
         super(message);
     }

@@ -47,6 +47,7 @@ public class Spot {
                 '}';
     }
 
+    //TODO: add validation
     public static Spot extract(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         int spot_id = resultSet.getInt("spot_id");

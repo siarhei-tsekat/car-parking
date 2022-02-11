@@ -76,5 +76,6 @@ public class Reservation {
         Timestamp end_time = resultSet.getTimestamp("end_time");
         BigDecimal price = resultSet.getBigDecimal("price");
         return new Reservation(id, reservation_id, user_id, spot_id, start_time.toLocalDateTime(), end_time != null ? end_time.toLocalDateTime() : null, price);
+        //TODO: add validation
     }
 }

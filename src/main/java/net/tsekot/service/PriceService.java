@@ -3,7 +3,7 @@ package net.tsekot.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
+//TODO: Add real implementation
 public class PriceService {
 
     public Double calculateCost(LocalDateTime startTime, LocalDateTime endTime, BigDecimal price) {

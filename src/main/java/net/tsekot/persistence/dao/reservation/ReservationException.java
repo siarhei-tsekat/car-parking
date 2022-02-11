@@ -1,6 +1,8 @@
 package net.tsekot.persistence.dao.reservation;
 
-public class ReservationException extends Exception {
+import net.tsekot.domain.DomainException;
+
+public class ReservationException extends DomainException {
 
     public ReservationException(String message) {
         super(message);

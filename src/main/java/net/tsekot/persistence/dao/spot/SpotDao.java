@@ -53,7 +53,7 @@ public class SpotDao {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE spots SET available = ? where spot_id = ?")) {
 
-            preparedStatement.setInt(1, spot.isAvailable() ? 0 : 1);
+            preparedStatement.setInt(1, spot.isAvailable() ? 0 : 1); //TODO: move this logic to Spot entity
             preparedStatement.setLong(2, spot.getSpotId());
             int i = preparedStatement.executeUpdate();
 

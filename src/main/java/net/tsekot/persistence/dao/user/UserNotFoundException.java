@@ -1,6 +1,8 @@
 package net.tsekot.persistence.dao.user;
 
-public class UserNotFoundException extends Exception {
+import net.tsekot.domain.DomainException;
+
+public class UserNotFoundException extends DomainException {
     public UserNotFoundException(String message) {
         super(message);
     }
